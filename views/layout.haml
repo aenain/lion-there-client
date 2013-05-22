@@ -1,0 +1,12 @@
+!!!
+%html
+  %head
+    %title Sample usage of Put That There
+    = css :all
+    = yield_content(:head)
+
+  %body
+    = yield
+
+    = js :all
+    = yield_content(:javascripts)

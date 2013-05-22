@@ -1,0 +1,39 @@
+%section.calibration.full-screen
+  #calibration
+    .marker.top.left
+    .marker.top.right
+    .marker.bottom.right
+    .marker.bottom.left
+
+    %p.description
+      Move your pointing finger to put the cursor into the marker zone and say
+      = succeed '.' do
+        %span.command marker
+
+- content_for(:javascripts) do
+  :coffeescript
+    socket = new JSONSocket("ws://localhost:8080/")
+    socket.bind 'open', ->
+      console.log("open")
+      socket.send('configuration:commands', [])
+      socket.send 'calibration:init'
+
+    socket.bind 'close', ->
+      console.log("close")
+
+    socket.bind 'calibration:init', ->
+      console.log("calibration init")
+
+    socket.bind 'calibration:start', ->
+      console.log("calibration start")
+
+    socket.bind 'calibration:next_marker', (message) ->
+      console.log("calibration next")
+
+    socket.bind 'calibration:done', ->
+      console.log("")
+    socket.bind 'message', (type, message, event) ->
+      console.log("[" + type + "] " + message)
+
+    socket.bind 'calibration:init', (message, event) ->
+      console.log("da faq!")
