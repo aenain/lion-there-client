@@ -1,17 +1,107 @@
-%section.calibration.full-screen
-  #calibration
-    .marker.top.left
-    .marker.top.right
+%section.full-screen
+  #error.error.layer
+    .message
+      %h2#error-description You are too far from the sensors.
+      %p#error-instruction.instruction Please move closer to the Kinect device.
+
+  #waiting.waiting.layer.active
+    .message
+      %h2#waiting-description Connecting
+
+  #welcome-screen.welcome.layer
+    .content
+      %header.logo
+        = img '/images/lion.png'
+        %h1 lion there.
+
+      %p.instruction
+        Calibrate the device
+        %br
+        to start putting lions.
+
+      .voice
+        %span.command calibrate
+        %span.helper
+          say
+          %i calibrate
+
+  #calibration.calibration.layer
+    .marker.top.left.highlight
+    .marker.top.middle
+    .marker.top.right.locked
     .marker.bottom.right
+    .marker.bottom.middle
     .marker.bottom.left
 
-    %p.description
-      Move your pointing finger to put the cursor into the marker zone and say
-      = succeed '.' do
-        %span.command marker
+    .message
+      .interchangeable-container
+        %p.instruction.back
+          Please move the cursor over
+          %br
+          the highlighted marker.
+
+        .voice.front
+          %span.command mark
+
+  #main.layer
+    %canvas#canvas
 
 - content_for(:javascripts) do
   :coffeescript
+    resizeLayersToFitViewport = ->
+      viewportSize =
+        height: window.innerHeight
+        width: window.innerWidth
+
+      fullScreen = document.querySelector(".full-screen")
+      fullScreen.style.height = viewportSize.height + 'px'
+
+      layers = document.querySelectorAll(".full-screen .layer")
+      for layer in layers
+        layer.style.height = viewportSize.height + 'px'
+        layer.style.width = viewportSize.width + 'px'
+
+      canvas = document.querySelector("#canvas")
+      canvas.height = viewportSize.height
+      canvas.width = viewportSize.width
+
+    resizeLayersToFitViewport()
+
+    changeActiveLayer = (layer) ->
+      currentLayer = document.querySelector('.layer.active')
+      nextLayer = document.querySelector(layer)
+
+      # hide currently active layer
+      currentLayer.classList.remove('active')
+
+      # shows new layer
+      nextLayer.classList.add('active')
+
+    # simple flow of layers
+    setTimeout =>
+      changeActiveLayer('#error')
+      setTimeout =>
+        changeActiveLayer('#waiting')
+        setTimeout =>
+          changeActiveLayer('#welcome-screen')
+          setTimeout =>
+            changeActiveLayer('#calibration')
+          , 1500
+        , 1500
+      , 1500
+    , 1000
+
+    bindChangingInstructionsToMarker = (marker) ->
+      marker.onmouseover = (event) ->
+        instruction = document.querySelector('#calibration .interchangeable-container')
+        instruction.classList.add('change')
+      marker.onmouseout = (event) ->
+        instruction = document.querySelector('#calibration .interchangeable-container')
+        instruction.classList.remove('change')
+
+    highlightedMarker = document.querySelector('#calibration .marker.highlight')
+    bindChangingInstructionsToMarker(highlightedMarker)
+
     socket = new JSONSocket("ws://localhost:8080/")
     socket.bind 'open', ->
       console.log("open")

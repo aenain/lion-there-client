@@ -2,7 +2,6 @@ require 'bundler/setup'
 require 'sinatra/base'
 require 'sinatra/assetpack'
 require 'sinatra/content_for'
-require 'pry'
 
 class Client < Sinatra::Base
   set :root, __dir__
@@ -11,8 +10,6 @@ class Client < Sinatra::Base
   helpers Sinatra::ContentFor
 
   assets do
-    clear_ignores!
-
     serve '/javascripts',     from: 'app/javascripts'
     serve '/stylesheets',     from: 'app/stylesheets'
     serve '/images',          from: 'app/images'

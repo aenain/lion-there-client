@@ -1,2 +1,223 @@
+$primary-color: rgb(102, 204, 153) // hsb(150, 50, 80)
+$error-color: rgb(204, 102, 102) // hsb(0, 50, 80)
+$header-color: rgb(255, 255, 255)
+$normal-color: rgb(126, 126, 126) // hsb(0, 0, 50)
+$opacity: 0.6
+
 *
-  font-family: Raleway
+  font-family: Avenir
+  font-weight: 100
+
+html, body
+  font-size: 48px
+  letter-spacing: -0.08em
+  line-height: 0.8em
+  margin: 0
+  padding: 0
+  overflow: hidden
+  cursor: url('/images/cursor.png'), auto
+
+h2
+  font-size: 1.3333333em // 64 / 48
+  line-height: 1.2em
+  margin: 0
+
+p
+  color: $normal_color
+  line-height: 1.2em
+  letter-spacing: -1px
+  margin: 0
+
+h2 + p
+  margin-top: 0.2em
+
+.layer
+  background-color: #fff
+  text-align: center
+  z-index: auto
+  opacity: 0
+  -webkit-transition: opacity 0.5s ease-in-out // TODO! add support for other browsers
+
+  &.active
+    z-index: 9999
+    opacity: 1
+
+  .instruction
+    opacity: $opacity
+
+  .message
+    margin: 28% auto 0
+    display: inline-block
+    position: relative
+
+    h2
+      white-space: nowrap
+
+    p
+      text-align: left
+
+.interchangeable-container
+  position: relative
+
+  .back, .front
+    -webkit-transition: opacity 0.3s ease-in-out // TODO! add support for other browsers
+
+  .back
+    position: relative
+    top: 0
+
+  .front
+    position: absolute
+    top: 0
+    opacity: 0
+
+  &.change
+    .back
+      opacity: 0
+
+    .front
+      opacity: 1
+
+.calibration
+  .interchangeable-container
+    .front
+      top: 1em
+      margin-left: 50%
+      left: -1.8em
+
+.error, .waiting, .welcome
+  *
+    color: $header_color
+
+  .voice .command
+    color: inherit
+
+    &:before
+      background-image: url('/images/speak-icon-header.png')
+
+.error
+  background-color: $error-color
+
+.waiting, .welcome
+  background-color: $primary-color
+
+.waiting
+  h2:after
+    content: "..."
+
+.welcome
+  text-align: center
+
+  .content
+    display: inline-block
+    margin-top: 12%
+
+  .instruction
+    margin: 1em 0
+
+  .voice
+    margin-top: 29%
+
+.full-screen
+  position: relative
+  width: 100%
+  height: 100%
+  top: 0
+  left: 0
+
+  .layer
+    position: absolute
+    top: 0
+    left: 0
+
+.logo
+  img
+    display: inline
+
+  h1
+    font-size: 2.375em // 114 / 48
+    font-family: Designosaur
+    display: inline
+    padding-left: 0.2em
+
+.voice
+  .command
+    font-weight: 800
+    letter-spacing: -1px
+    opacity: 1
+    text-transform: uppercase
+    color: $primary-color
+
+    &:before
+      content: ''
+      background: url('/images/speak-icon-primary.png') 0 0 no-repeat
+      background-size: 100% 100%
+      display: inline-block
+      width: 19px
+      height: 35px
+      margin-right: 0.2em
+      opacity: $opacity
+
+  .helper
+    display: block
+    opacity: $opacity
+    font-size: 0.6em
+    letter-spacing: -1px
+
+// calibration layer
+$marker-width: 3em
+.marker
+  position: absolute
+  width: $marker-width
+  height: $marker-width
+  background-color: $normal-color
+  opacity: $opacity
+  -webkit-transform: rotate(45deg) // TODO! add support for other browsers
+  -webkit-transition: opacity 0.3s ease-in-out // TODO! add support for other browsers
+
+  &.locked
+    opacity: 0
+
+    &:hover
+      opacity: 0
+
+  &.highlight
+    background-color: $primary-color
+
+  &:hover
+    opacity: 1
+
+  &.top.middle
+    margin-left: 50%
+    left: -$marker-width/2
+    top: -1.44*$marker-width/2
+
+  &.bottom.middle
+    margin-right: 50%
+    right: -$marker-width/2
+    bottom: -1.44*$marker-width/2
+
+  &.top
+    top: -$marker-width/2
+
+  &.bottom
+    bottom: -$marker-width/2
+
+  &.left
+    left: -$marker-width/2
+
+  &.right
+    right: -$marker-width/2
+
+// set cursor position using margin-left and margin-right properties (of cursor's center)
+.cursor
+  position: absolute
+  z-index: 9999
+  margin-left: 100px
+  margin-top: 100px
+  left: -37px
+  top: -37px
+  height: 75px
+  width: 75px
+  background: url('/images/cursor.png') 0 0 no-repeat
+  background-size: 100% 100%
