@@ -113,10 +113,10 @@ class Kinect.Client
   #
   # Tells server that active object has changed.
   #
-  # @param id Number - null can be passed to tell server that none object is active.
+  # @param name String|null - null to tell server that none object is active.
   #
-  setActiveObject: (id) ->
-    @send('object:set_active', { id: id || null })
+  setActiveObject: (name) ->
+    @send('object:set_active', { name: name || null })
 
   #
   # Checks whether connection has been ever successfully established.
@@ -242,6 +242,9 @@ class Kinect.Model
       object_types: false
       objects: false
       sizing: false
+
+    @timeouts =
+      activeElement: null
 
     @currentMarker = null
 
@@ -372,8 +375,11 @@ class Kinect.Model
     element = @elements[id]
     @view.moveElement(element.html, { center: { top: centerLocation.top, left: centerLocation.left }})
 
-  setActiveElementById: (@activeElementId) ->
-    @client.setActiveObject(@activeElementId)
+  setActiveElement: (@activeElement) ->
+    clearTimeout(@timeouts.activeElement)
+    @timeouts.activeElement = setTimeout =>
+      @client.setActiveObject(@activeElement)
+    , 5
 
   #
   # @private
@@ -507,10 +513,10 @@ class Kinect.View
   # @param element HTMLElement
   #
   bindActiveElementTracker: (element) ->
-    element.mouseover = (event) =>
-      @model.setActiveElementById(element.id)
-    element.mouseout = (event) =>
-      @model.setActiveElementById(null)
+    element.onmouseover = (event) =>
+      @model.setActiveElement(element.dataset.name)
+    element.onmouseout = (event) =>
+      @model.setActiveElement(null)
 
   #
   # Creates HTML Nodes for markers (identifiers are from server)
