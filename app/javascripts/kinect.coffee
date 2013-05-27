@@ -281,6 +281,7 @@ class Kinect.Model
 
   configure: ->
     @view.displayLoader('Configuring')
+
     @client.defineTypes(@definitions.types)
     @client.defineElements(@definitions.elements)
     @client.defineSizing(@definitions.sizing)
@@ -401,7 +402,7 @@ class Kinect.Model
 #     <p data-dest="hint"></p>
 #   </div>
 #   <!-- loading layer -->
-#   <div class="layer" id="waiting">
+#   <div class="layer" id="loading">
 #     <h2 data-dest="description"></h2>
 #   </div>
 #   <!-- welcome screen -->
@@ -552,8 +553,8 @@ class Kinect.View
   # Displays the loader layer with the passed message.
   #
   displayLoader: (message) ->
-    @updateLayer('waiting', { description: message || "" })
-    @changeActiveLayer('waiting')
+    @updateLayer('loading', { description: message || "" })
+    @changeActiveLayer('loading')
 
   displayWelcomeScreen: ->
     @changeActiveLayer('welcome-screen')
@@ -659,8 +660,8 @@ class Kinect.View
   transitLayers: ->
     previousLayer = @layers.previous.element ? document.querySelector('.layer.active')
     currentLayer = @layers.active.element
-    currentLayer.classList.add('active')
     previousLayer.classList.remove('active') if previousLayer
+    currentLayer.classList.add('active')
 
   #
   # @private
