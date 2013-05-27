@@ -42,8 +42,8 @@
 
 - content_for(:javascripts) do
   :coffeescript
-    elementBuilder = new Kinect.ElementBuilder()
-    elementBuilder.defineElements([
+    builder = new Kinect.ImageBuilder()
+    builder.defineTemplates([
       { name: "lion", attributes: { src: "http://www.neowin.net/forum/uploads/monthly_08_2012/post-62693-0-28128000-1344526701.jpg" } }
       { name: "simba", attributes: { src: "http://www.neowin.net/forum/uploads/monthly_08_2012/post-62693-0-28128000-1344526701.jpg" } }
     ])
@@ -57,5 +57,5 @@
       { name: "simba", type: "small-photo" }
     ])
     model.setGutter(20)
-    model.setBuilder(elementBuilder)
+    model.setBuilder(builder)
     model.init()

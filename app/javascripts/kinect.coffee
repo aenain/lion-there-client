@@ -3,32 +3,60 @@ Kinect = {}
 root.Kinect = Kinect
 
 #
-# Custom element builder for Kinect.Model.
+# Abstract element builder for Kinect.Model.
+# This class should be extended and provide an implemented version of the build method.
 #
-class Kinect.ElementBuilder
+class Kinect.AbstractBuilder
   constructor: ->
-    @elementTemplates = {}
+    @templates = {}
 
   #
-  # Defines elements for builder.
+  # Defines templates for builder.
+  # Everything passed under the key attributes
+  # will be accessible for later use.
   #
   # Example:
-  #   defineElements([
-  #     { name: "lion", attributes: { src: "..." } }
+  #   defineTemplates([
+  #     { name: "lion", attributes: { color: "...", ... } }
   #   ])
-  defineElements: (elements) ->
-    @defineElement(element) for element in elements
+  defineTemplates: (templates) ->
+    @defineTemplate(template) for template in templates
 
-  defineElement: (element) ->
-    @elementTemplates[element.name] = element.attributes
+  defineTemplate: (template) ->
+    @templates[template.name] = template.attributes
 
+  #
+  # Builds an html element based on a template.
+  #
   build: (element) ->
-    elementTemplate = @elementTemplates[element.name]
-    htmlElement = new Image()
-    htmlElement.src = elementTemplate.src
+    template = @getTemplate(element.name)
+    @buildFromTemplate(element, template)
 
-    htmlElement
+  #
+  # @private
+  # Builds an html element based on a template.
+  # Override this method so it returns a dom node using template as an attributes provider.
+  #
+  # @param element Object(name, ...) - instance of an element to be put on the work area
+  # @param template Object(...) - all attributes defined under the :attributes key with defineTemplate(s) method.
+  # @returns HTMLElement or one of its children, e.g. HTMLImageElement
+  #
+  buildFromTemplate: (element, template) ->
+    # implemented in a derived class.
 
+  #
+  # @private
+  #
+  getTemplate: (name) ->
+    @templates[name]
+
+class Kinect.ImageBuilder extends Kinect.AbstractBuilder
+  # @override
+  buildFromTemplate: (element, template) ->
+    image = new Image()
+    image.src = template.src
+
+    image
 
 #
 # Provides well-defined interface to handle websocket-based connection.
@@ -473,10 +501,12 @@ class Kinect.View
 
     element
 
+  # TODO! setActiveElement accordingly if necessary
   removeElement: (htmlElement) ->
     # TODO! maybe add some animations?
     htmlElement.remove()
 
+  # TODO! setActiveElement accordingly if necessary
   moveElement: (htmlElement, location) ->
     htmlElement.style.top = location.center.top + 'px'
     htmlElement.style.left = location.center.left + 'px'
