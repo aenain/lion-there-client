@@ -1,12 +1,12 @@
 %section.full-screen
   #error.error.layer
     .message
-      %h2#error-description You are too far from the sensors.
-      %p#error-instruction.instruction Please move closer to the Kinect device.
+      %h2(data-dest="description") You are too far from the sensors.
+      %p.instruction(data-dest="hint") Please move closer to the Kinect device.
 
-  #waiting.waiting.layer.active
+  #waiting.waiting.layer
     .message
-      %h2#waiting-description Connecting
+      %h2(data-dest="description") Custom
 
   #welcome-screen.welcome.layer
     .content
@@ -26,13 +26,6 @@
           %i calibrate
 
   #calibration.calibration.layer
-    .marker.top.left.highlight
-    .marker.top.middle
-    .marker.top.right.locked
-    .marker.bottom.right
-    .marker.bottom.middle
-    .marker.bottom.left
-
     .message
       .interchangeable-container
         %p.instruction.back
@@ -43,87 +36,24 @@
         .voice.front
           %span.command mark
 
-  #main.layer
-    %canvas#canvas
+    / markers are going to be here
+
+  #work-area.layer
 
 - content_for(:javascripts) do
   :coffeescript
-    resizeLayersToFitViewport = ->
-      viewportSize =
-        height: window.innerHeight
-        width: window.innerWidth
+    elementBuilder = new Kinect.ElementBuilder()
+    elementBuilder.defineElements([
+      { name: "lion", attributes: { src: "http://www.neowin.net/forum/uploads/monthly_08_2012/post-62693-0-28128000-1344526701.jpg" } }
+    ])
 
-      fullScreen = document.querySelector(".full-screen")
-      fullScreen.style.height = viewportSize.height + 'px'
-
-      layers = document.querySelectorAll(".full-screen .layer")
-      for layer in layers
-        layer.style.height = viewportSize.height + 'px'
-        layer.style.width = viewportSize.width + 'px'
-
-      canvas = document.querySelector("#canvas")
-      canvas.height = viewportSize.height
-      canvas.width = viewportSize.width
-
-    resizeLayersToFitViewport()
-
-    changeActiveLayer = (layer) ->
-      currentLayer = document.querySelector('.layer.active')
-      nextLayer = document.querySelector(layer)
-
-      # hide currently active layer
-      currentLayer.classList.remove('active')
-
-      # shows new layer
-      nextLayer.classList.add('active')
-
-    # simple flow of layers
-    setTimeout =>
-      changeActiveLayer('#error')
-      setTimeout =>
-        changeActiveLayer('#waiting')
-        setTimeout =>
-          changeActiveLayer('#welcome-screen')
-          setTimeout =>
-            changeActiveLayer('#calibration')
-          , 1500
-        , 1500
-      , 1500
-    , 1000
-
-    bindChangingInstructionsToMarker = (marker) ->
-      marker.onmouseover = (event) ->
-        instruction = document.querySelector('#calibration .interchangeable-container')
-        instruction.classList.add('change')
-      marker.onmouseout = (event) ->
-        instruction = document.querySelector('#calibration .interchangeable-container')
-        instruction.classList.remove('change')
-
-    highlightedMarker = document.querySelector('#calibration .marker.highlight')
-    bindChangingInstructionsToMarker(highlightedMarker)
-
-    socket = new JSONSocket("ws://localhost:8080/")
-    socket.bind 'open', ->
-      console.log("open")
-      socket.send('configuration:commands', [])
-      socket.send 'calibration:init'
-
-    socket.bind 'close', ->
-      console.log("close")
-
-    socket.bind 'calibration:init', ->
-      console.log("calibration init")
-
-    socket.bind 'calibration:start', ->
-      console.log("calibration start")
-
-    socket.bind 'calibration:next_marker', (message) ->
-      console.log("calibration next")
-
-    socket.bind 'calibration:done', ->
-      console.log("")
-    socket.bind 'message', (type, message, event) ->
-      console.log("[" + type + "] " + message)
-
-    socket.bind 'calibration:init', (message, event) ->
-      console.log("da faq!")
+    model = new Kinect.Model("ws://localhost:8080")
+    model.defineTypes([
+      { name: "small-photo", width: 400, height: 400 }
+    ])
+    model.defineElements([
+      { name: "lion", type: "small-photo" }
+    ])
+    model.setGutter(20)
+    model.setBuilder(elementBuilder)
+    model.init()

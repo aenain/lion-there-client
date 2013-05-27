@@ -53,5 +53,6 @@ root.JSONSocket = class JSONSocket
 
     @_socket.onmessage = (event) =>
       data = JSON.parse(event.data)
+      console.log(data)
       @trigger('message', [data.type, data.message, event])
       @trigger(data.type, [data.message, event])
