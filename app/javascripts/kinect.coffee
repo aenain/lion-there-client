@@ -55,6 +55,7 @@ class Kinect.ImageBuilder extends Kinect.AbstractBuilder
   buildFromTemplate: (element, template) ->
     image = new Image()
     image.src = template.src
+    image.classList.add("element")
 
     image
 
