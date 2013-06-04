@@ -449,8 +449,8 @@ class Kinect.Model
 class Kinect.View
   @ERRORS =
     cant_connect:
-      description: ""
-      hint: ""
+      description: "Can't connect to the server."
+      hint: "Please make sure if server is running a websocket."
 
     connection_lost:
       description: "Connection lost."
