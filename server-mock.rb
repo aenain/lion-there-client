@@ -3,12 +3,12 @@ require 'json'
 
 CONFIG = {
   config_for: 2,
-  welcome_screen_for: 5,
+  welcome_screen_for: 3,
   skip_calibration: false,
   marker_for: 2,
   markers: ["top left", "top", "top right", "bottom right", "bottom", "bottom left"],
-  move_element_after: 2,
-  remove_element_after: 6
+  move_element_after: 1,
+  remove_element_after: 1
 }
 
 def after(timeout)
@@ -18,7 +18,7 @@ def after(timeout)
   end
 end
 
-EventMachine::WebSocket.start(host: "0.0.0.0", port: 8080) do |ws|
+EventMachine::WebSocket.start(host: "0.0.0.0", port: 4649) do |ws|
   # helper for sending a custom objects
   send = lambda do |type, message = {}|
     puts "send: [#{type}] #{message.inspect}"
@@ -83,8 +83,16 @@ EventMachine::WebSocket.start(host: "0.0.0.0", port: 8080) do |ws|
         send.("object:move", name: "simba", top: 400, left: 700)
       end
 
-      after(CONFIG[:remove_element_after]) do
+      after(CONFIG[:move_element_after]) do
+        send.("object:move", name: "lion", top: 400, left: 1000)
+      end
+
+      after(CONFIG[:move_element_after] + CONFIG[:remove_element_after]) do
         send.("object:remove", name: "lion")
+      end
+
+      after(CONFIG[:move_element_after] + CONFIG[:remove_element_after]) do
+        send.("object:remove", name: "simba")
       end
     end
   end
