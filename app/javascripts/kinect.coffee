@@ -244,10 +244,10 @@ class Kinect.Client
       @model.createElement(attributes) if @model
 
     @socket.bind 'object:remove', (data, event) =>
-      @model.removeElement(data.id) if @model
+      @model.removeElement(data.name) if @model
 
     @socket.bind 'object:move', (data, event) =>
-      @model.moveElementTo(data.id, { top: data.top, left: data.left }) if @model
+      @model.moveElementTo(data.name, { top: data.top, left: data.left }) if @model
 
   #
   # Sends data directly through the websocket.
@@ -392,17 +392,17 @@ class Kinect.Model
     element = @elementBuilder.build(attributes)
     @view.addElement(element, attributes)
 
-    @elements[attributes.id] =
+    @elements[attributes.name] =
       attributes: attributes
       html: element
 
-  removeElement: (id) ->
-    element = @elements[id]
-    delete @elements[id]
+  removeElement: (name) ->
+    element = @elements[name]
+    delete @elements[name]
     @view.removeElement(element.html)
 
-  moveElementTo: (id, centerLocation) ->
-    element = @elements[id]
+  moveElementTo: (name, centerLocation) ->
+    element = @elements[name]
     @view.moveElement(element.html, { center: { top: centerLocation.top, left: centerLocation.left }})
 
   setActiveElement: (@activeElement) ->
@@ -502,9 +502,7 @@ class Kinect.View
 
     element
 
-  # TODO! setActiveElement accordingly if necessary
   removeElement: (htmlElement) ->
-    # TODO! maybe add some animations?
     htmlElement.remove()
 
   # TODO! setActiveElement accordingly if necessary
