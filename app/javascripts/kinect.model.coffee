@@ -131,7 +131,7 @@ class Kinect.Model
 
   createElement: (elementAttrs) ->
     type = @findType(elementAttrs.type)
-    throw "element type: #{elementType} is undefined!" unless type
+    throw "element type of #{elementAttrs} is undefined!" unless type
 
     attributes = _.extend({ width: type.width, height: type.height }, elementAttrs)
     element = @elementBuilder.build(attributes)

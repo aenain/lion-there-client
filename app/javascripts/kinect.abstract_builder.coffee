@@ -4,7 +4,8 @@ root.Kinect = Kinect
 
 #
 # Abstract element builder for Kinect.Model.
-# This class should be extended and provide an implemented version of the build method.
+# This class should be extended and the derived class
+# should provide an implemented version of the buildFromTemplate method.
 #
 class Kinect.AbstractBuilder
   constructor: ->
